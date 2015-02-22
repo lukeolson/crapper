@@ -44,7 +44,7 @@ def identify_template(hfile):
     temp_iter = re.finditer('template\s*\<', text)
     temp_start = [m.start(0) for m in temp_iter]
 
-    ntemp = len(temp_start)
+    #ntemp = len(temp_start)
     classre = re.compile('template.*<(.+?)>')
     funcre = re.compile('template\s*<.*?>(.+?){', re.DOTALL)
     argsre = re.compile('(.+?)\s+(.+?)\s*\((.*?)\)', re.DOTALL)
@@ -63,7 +63,7 @@ def identify_template(hfile):
         classes = re.sub('class', '', classes)
         classes = re.sub('typename', '', classes)
         classes = re.sub('\s', '', classes).split(',')
-        for tid  in classes:
+        for tid in classes:
             if len(tid) == 1:
                 thistype = tid
             else:
@@ -72,8 +72,8 @@ def identify_template(hfile):
                 thisnum = m.group(2).strip()
 
             if thistype not in types:
-                raise ValueError('class type \'%s\' not supported ' % thistype +
-                                 'in your header file %s' % hfile) 
+                raise ValueError('class type \'%s\' not supported' % thistype +
+                                 ' in your header file %s' % hfile)
 
         # get the function declaration
         m = argsre.match(funccall)
@@ -81,7 +81,7 @@ def identify_template(hfile):
         funcname = m.group(2).strip()
         funcargs = m.group(3).strip()
         args = funcargs.split(',')
-        
+
         # mark args, const, type
         if len(args[0]) == 0:
             args = []
@@ -95,6 +95,7 @@ def identify_template(hfile):
             arg = arg.replace('const', '').strip()
             atype.append(arg[0])
 
+        funcs[funcname] = {'const': const, 'atype': atype, 'ret': funcret}
         print('\t[%s(...)]' % funcname)
 
 
