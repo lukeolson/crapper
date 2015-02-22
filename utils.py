@@ -50,7 +50,7 @@ def identify_template(hfile):
     argsre = re.compile('(.+?)\s+(.+?)\s*\((.*?)\)', re.DOTALL)
     tidre = re.compile('([%s])' % ''.join(types) + '([0-9]+)')
 
-    funcs = {}
+    funcs = []
     print('[parsing %s]' % hfile)
     for tstart in temp_start:
         # class list
@@ -95,7 +95,18 @@ def identify_template(hfile):
             arg = arg.replace('const', '').strip()
             atype.append(arg[0])
 
-        funcs[funcname] = {'const': const, 'atype': atype, 'ret': funcret}
+        if funcret == 'void':
+            spec = 'v'
+        else:
+            spec = funcret
+        for c, t in zip(const, atype):
+            if c:
+                spec += t
+            else:
+                spec += '*' + t
+
+        funcs.append({'func': funcname, 'const': const, 'atype': atype,
+                      'ret': funcret, 'spec': spec})
         print('\t[%s(...)]' % funcname)
     return funcs
 
