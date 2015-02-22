@@ -219,7 +219,7 @@ def parse_routine(name, args, types):
     return thunk_code, method_code
 
 
-def main(hfilelist):
+def main(hfilelist, hfiledir):
     p = optparse.OptionParser(usage=__doc__.strip())
     p.add_option("--no-force", action="store_false",
                  dest="force", default=True)
@@ -231,11 +231,13 @@ def main(hfilelist):
 
     # Generate *_impl.h for each header
     for hfile in hfilelist:
-        funcs = utils.identify_templates(hfile)
+        funcs = utils.identify_templates(os.path.join(hfiledir, hfile))
 
         # Produce output
-        dst = os.path.join(os.path.dirname(__file__),
-                           hfile[:-2] + '_impl.h')
+        dst = os.path.join(os.path.dirname(__file__), hfiledir,
+                           hfile.replace('.h', '') + '_impl.h')
+
+        print(dst)
 
         if not newer(__file__, dst) or not options.force:
             print("[generate_functions] %r already up-to-date" % (dst,))
@@ -274,6 +276,6 @@ def main(hfilelist):
 
 if __name__ == "__main__":
     temps = os.listdir('./templates')
-    example_templates = ['./templates/' + h for h in temps
+    example_templates = [h for h in temps
                          if (h.startswith('example') and h.endswith('.h'))]
-    main(example_templates)
+    main(example_templates, './templates/')
