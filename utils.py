@@ -1,7 +1,7 @@
 import re
 
 
-def identify_template(hfile):
+def identify_templates(hfile):
     """
     Parameters
     ----------
@@ -51,7 +51,7 @@ def identify_template(hfile):
     tidre = re.compile('([%s])' % ''.join(types) + '([0-9]+)')
 
     funcs = []
-    print('[parsing %s]' % hfile)
+    print('[identify_templates] ...parsing %s' % hfile)
     for tstart in temp_start:
         # class list
         classes = classre.search(text, tstart).group(1).strip()
@@ -107,7 +107,7 @@ def identify_template(hfile):
 
         funcs.append({'func': funcname, 'const': const, 'atype': atype,
                       'ret': funcret, 'spec': spec})
-        print('\t[%s(...)]' % funcname)
+        print('\t...found %s(...)' % funcname)
     return funcs
 
 
@@ -117,6 +117,6 @@ if __name__ == '__main__':
     example_templates = ['./templates/' + h for h in temps
                          if (h.startswith('example') and h.endswith('.h'))]
     for temp in example_templates:
-        funcs = identify_template(temp)
+        funcs = identify_templates(temp)
 
-    funcs = identify_template('./templates/example.h')
+    funcs = identify_templates('./templates/example.h')
