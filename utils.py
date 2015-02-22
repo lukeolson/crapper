@@ -97,6 +97,7 @@ def identify_template(hfile):
 
         funcs[funcname] = {'const': const, 'atype': atype, 'ret': funcret}
         print('\t[%s(...)]' % funcname)
+    return funcs
 
 
 if __name__ == '__main__':
@@ -105,4 +106,6 @@ if __name__ == '__main__':
     example_templates = ['./templates/' + h for h in temps
                          if (h.startswith('example') and h.endswith('.h'))]
     for temp in example_templates:
-        identify_template(temp)
+        funcs = identify_template(temp)
+
+    funcs = identify_template('./templates/example.h')
