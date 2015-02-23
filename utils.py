@@ -44,7 +44,7 @@ def identify_templates(hfile):
     temp_iter = re.finditer('template\s*\<', text)
     temp_start = [m.start(0) for m in temp_iter]
 
-    #ntemp = len(temp_start)
+    # ntemp = len(temp_start)
     classre = re.compile('template.*<(.+?)>')
     funcre = re.compile('template\s*<.*?>(.+?){', re.DOTALL)
     argsre = re.compile('(.+?)\s+(.+?)\s*\((.*?)\)', re.DOTALL)
@@ -70,6 +70,7 @@ def identify_templates(hfile):
                 m = tidre.match(tid)
                 thistype = m.group(1).strip()
                 thisnum = m.group(2).strip()
+                del thisnum
 
             if thistype not in types:
                 raise ValueError('class type \'%s\' not supported' % thistype +
