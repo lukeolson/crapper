@@ -21,13 +21,11 @@
 #define NO_IMPORT_ARRAY
 
 #include <Python.h>
-#include "numpy/arrayobject.h"
 
 #include <string>
 #include <stdexcept>
 #include <vector>
 #include <cstdlib>
-
 
 #include "sparsetools.h"
 
