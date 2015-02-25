@@ -1,8 +1,9 @@
 #ifndef SPARSETOOLS_H
 #define SPARSETOOLS_H
 
+#define PY_ARRAY_UNIQUE_SYMBOL _crappy
 #include <Python.h>
-#include "numpy/ndarrayobject.h"
+#include "numpy/arrayobject.h"
 
 #include <stdexcept>
 

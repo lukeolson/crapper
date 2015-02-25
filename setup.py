@@ -23,15 +23,11 @@ def configuration(parent_package='', top_path=None):
 
     sources = [s.replace('.h', '.cxx') for s in template_headers]
     sources += [os.path.join('base', 'sparsetools.cxx')]
+    sources += [os.path.join('templates', 'initmodule.cxx')]
     print(sources)
 
     import generate_functions
     generate_functions.main(template_headers, '')
-    # try:
-    #     subprocess.check_call([sys.executable, 'generate_functions.py',
-    #                           '--no-force'])
-    # except subprocess.CalledProcessError as e:
-    #     raise Exception('Problem running' + ' '.join(e.cmd))
 
     config.add_extension('crappy',
                          define_macros=[('__STDC_FORMAT_MACROS', 1)],

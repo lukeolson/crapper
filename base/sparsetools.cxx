@@ -17,9 +17,11 @@
  * where one character represents one argument. The one-character values are
  * listed below in the call_spec function.
  */
+#define PY_ARRAY_UNIQUE_SYMBOL _crappy
+#define NO_IMPORT_ARRAY
 
 #include <Python.h>
-#include "numpy/ndarrayobject.h"
+#include "numpy/arrayobject.h"
 
 #include <string>
 #include <stdexcept>
@@ -564,45 +566,3 @@ static PyObject *c_array_from_object(PyObject *obj, int typenum, int is_output)
         }
     }
 }
-
-
-/*
- * Python module initialization
- */
-
-extern "C" {
-
-#include "sparsetools_impl.h"
-
-#if PY_VERSION_HEX >= 0x03000000
-static struct PyModuleDef moduledef = {
-    PyModuleDef_HEAD_INIT,
-    "crappy",
-    NULL,
-    -1,
-    sparsetools_methods,
-    NULL,
-    NULL,
-    NULL,
-    NULL
-};
-
-PyObject *PyInit_crappy(void)
-{
-    PyObject *m;
-    m = PyModule_Create(&moduledef);
-    import_array();
-    return m;
-}
-#else
-PyMODINIT_FUNC initcrappy(void) {
-    PyObject *m;
-    m = Py_InitModule("crappy", sparsetools_methods);
-    import_array();
-    if (m == NULL) {
-        Py_FatalError("can't initialize module crappy");
-    }
-}
-#endif
-
-} /* extern "C" */
