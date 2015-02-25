@@ -1,7 +1,15 @@
 #!/usr/bin/env python
 """
-from
+much of this is from
 https://github.com/scipy/scipy/blob/master/scipy/sparse/generate_sparsetools.py
+https://github.com/scipy/scipy/blob/f428b82172a52c53112c55544239d611a655b7c0/scipy/sparse/generate_sparsetools.py
+
+It does several things:
+    - defines a bunch of I types
+    - defines a bunch of T types
+    - creates the right 'thunk call'
+    - creates a _impl.h file
+    - creates a .cxx file
 """
 import optparse
 import os
@@ -261,7 +269,7 @@ def main(hfilelist, hfiledir):
         - Idetifies templates with utils.identify_templates
         - Creates a call for every combination with parse_routines
         - Wrties these calls to *_impl.h
-        - Adds these headers to sparsetoos_impl.h
+        - Adds these headers to sparsetools_impl.h
     """
     p = optparse.OptionParser(usage=__doc__.strip())
     p.add_option("--no-force", action="store_false",
