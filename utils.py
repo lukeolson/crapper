@@ -31,6 +31,8 @@ def identify_templates(hfile):
           - I: int array
           - t: data scalar
           - T: data array
+        - if *, then pointer type
+          else, scalar
         - multiples of the same type look like I1, I2, ...
         - in addition 'const' and 'void'
         - in addition operators of the form OP&
@@ -94,7 +96,10 @@ def identify_templates(hfile):
             else:
                 const.append(False)
             arg = arg.replace('const', '').strip()
-            atype.append(arg[0])
+            if '*' in arg:
+                atype.append(arg[0].upper())
+            else:
+                atype.append(arg[0].lower())
 
         if funcret == 'void':
             spec = 'v'

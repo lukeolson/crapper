@@ -33,7 +33,7 @@ def configuration(parent_package='', top_path=None):
     # except subprocess.CalledProcessError as e:
     #     raise Exception('Problem running' + ' '.join(e.cmd))
 
-    config.add_extension('crapper',
+    config.add_extension('crappy',
                          define_macros=[('__STDC_FORMAT_MACROS', 1)],
                          depends=depends,
                          include_dirs=['base', 'templates'],

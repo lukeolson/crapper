@@ -72,6 +72,17 @@ NPY_VISIBILITY_HIDDEN PyObject *%s_method(PyObject *, PyObject *);
 STRUCT_TEMPLATE = """
   {\"%(name)s\", (PyCFunction)%(name)s_method, METH_VARARGS, NULL},"""
 
+CXX_TEMPLATE = """
+#define NO_IMPORT_ARRAY
+#define PY_ARRAY_UNIQUE_SYMBOL _crappy
+
+#include \"sparsetools.h\"
+#include \"%(name)s.h\"
+
+extern \"C\" {
+        #include \"%(name)s_impl.h\"
+}"""
+
 
 # Code generation
 def get_thunk_type_set():
@@ -170,6 +181,8 @@ def parse_routine(name, args, types):
                 continue
             elif t == 'i':
                 args.append("*(%s*)a[%d]" % (const + I_type, j))
+            elif t == 't':
+                args.append("*(%s*)a[%d]" % (const + T_type, j))
             elif t == 'I':
                 args.append("(%s*)a[%d]" % (const + I_type, j))
             elif t == 'T':
@@ -260,12 +273,13 @@ def main(hfilelist, hfiledir):
     i_types, t_types, it_types, getter_code = get_thunk_type_set()
 
     # Generate *_impl.h for each header
+    # Generate *.cxx for each header
     for hfile in hfilelist:
         funcs = utils.identify_templates(os.path.join(hfiledir, hfile))
 
-        # Produce output
+        # _impl.h
         dst = os.path.join(os.path.dirname(__file__), hfiledir,
-                           hfile.replace('.h', '') + '_impl.h')
+                           hfile.replace('.h', '_impl.h'))
 
         if not newer(__file__, dst) or not options.force:
             print("[generate_functions] %r already up-to-date" % (dst,))
@@ -299,6 +313,20 @@ def main(hfilelist, hfiledir):
                     f.write(thunk)
                 for method in methods:
                     f.write(method)
+
+        # .cxx
+        dst = os.path.join(os.path.dirname(__file__), hfiledir,
+                           hfile.replace('.h', '.cxx'))
+
+        if not newer(__file__, dst) or not options.force:
+            print("[generate_functions] %r already up-to-date" % (dst,))
+        else:
+            print("[generate_functions] generating %r" % (dst,))
+            with open(dst, 'w') as f:
+                f.write(AUTOGENERATE_TEMPLATE)
+                hbase = os.path.basename(hfile).replace('.h', '')
+                print hbase
+                f.write(CXX_TEMPLATE % dict(name=hbase))
 
     # Generate code for method struct
     method_defs = ""

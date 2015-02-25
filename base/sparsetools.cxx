@@ -19,13 +19,13 @@
  */
 
 #include <Python.h>
+#include "numpy/ndarrayobject.h"
 
 #include <string>
 #include <stdexcept>
 #include <vector>
 #include <cstdlib>
 
-#include "numpy/ndarrayobject.h"
 
 #include "sparsetools.h"
 
@@ -71,6 +71,7 @@ static PyObject *c_array_from_object(PyObject *obj, int typenum, int is_output);
  *
  *     'i': <integer> scalar
  *     'I': <integer> array
+ *     't': <data> scalar
  *     'T': <data> array
  *     'V': std::vector<integer>
  *     'W': std::vector<data>
@@ -149,6 +150,15 @@ call_thunk(char ret_spec, const char *spec, thunk_t *thunk, PyObject *args)
             continue;
         case 'i':
             /* Integer scalars */
+            arg = PyTuple_GetItem(args, arg_j);
+            if (arg == NULL) {
+                goto fail;
+            }
+            Py_INCREF(arg);
+            arg_arrays[j] = arg;
+            continue;
+        case 't':
+            /* Double scalars */
             arg = PyTuple_GetItem(args, arg_j);
             if (arg == NULL) {
                 goto fail;
@@ -539,18 +549,18 @@ static PyObject *c_array_from_object(PyObject *obj, int typenum, int is_output)
 {
     if (!is_output) {
         if (typenum == -1) {
-            return PyArray_FROM_OF(obj, NPY_C_CONTIGUOUS);
+            return PyArray_FROM_OF(obj, NPY_ARRAY_C_CONTIGUOUS);
         }
         else {
-            return PyArray_FROM_OTF(obj, typenum, NPY_C_CONTIGUOUS);
+            return PyArray_FROM_OTF(obj, typenum, NPY_ARRAY_C_CONTIGUOUS);
         }
     }
     else {
         if (typenum == -1) {
-            return PyArray_FROM_OF(obj, NPY_C_CONTIGUOUS|NPY_WRITEABLE|NPY_UPDATEIFCOPY);
+            return PyArray_FROM_OF(obj, NPY_ARRAY_C_CONTIGUOUS|NPY_ARRAY_WRITEABLE|NPY_ARRAY_UPDATEIFCOPY);
         }
         else {
-            return PyArray_FROM_OTF(obj, typenum, NPY_C_CONTIGUOUS|NPY_WRITEABLE|NPY_UPDATEIFCOPY);
+            return PyArray_FROM_OTF(obj, typenum, NPY_ARRAY_C_CONTIGUOUS|NPY_ARRAY_WRITEABLE|NPY_ARRAY_UPDATEIFCOPY);
         }
     }
 }
@@ -567,7 +577,7 @@ extern "C" {
 #if PY_VERSION_HEX >= 0x03000000
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
-    "_sparsetools",
+    "crappy",
     NULL,
     -1,
     sparsetools_methods,
@@ -577,7 +587,7 @@ static struct PyModuleDef moduledef = {
     NULL
 };
 
-PyObject *PyInit__sparsetools(void)
+PyObject *PyInit_crappy(void)
 {
     PyObject *m;
     m = PyModule_Create(&moduledef);
@@ -585,12 +595,12 @@ PyObject *PyInit__sparsetools(void)
     return m;
 }
 #else
-PyMODINIT_FUNC init_sparsetools(void) {
+PyMODINIT_FUNC initcrappy(void) {
     PyObject *m;
-    m = Py_InitModule("_sparsetools", sparsetools_methods);
+    m = Py_InitModule("crappy", sparsetools_methods);
     import_array();
     if (m == NULL) {
-        Py_FatalError("can't initialize module _sparsetools");
+        Py_FatalError("can't initialize module crappy");
     }
 }
 #endif
