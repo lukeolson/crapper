@@ -6,7 +6,7 @@
 #define NO_IMPORT_ARRAY
 #define PY_ARRAY_UNIQUE_SYMBOL _crappy
 
-#include "sparsetools.h"
+#include "crappy.h"
 #include "example.h"
 
 extern "C" {

@@ -2,21 +2,42 @@ Crappy: A basic C++ wrapper for python
 
 Crappy attempts to take a very limited form of C++ templates and wrap them in an
 easy way for Python.  It uses/modifies/simplifies/complicates the `sparsetools`
-structure in `scipy.sparse`: https://github.com/scipy/scipy/blob/master/scipy/sparse
+structure in `scipy.sparse`: [https://github.com/scipy/scipy/blob/master/scipy/sparse](https://github.com/scipy/scipy/blob/master/scipy/sparse)
 
 How it works
 ---
-  - coming
+  - you make a templated function like the following
+```C++
+// y += a*x
+template <class I, class T>
+void axpy(const I n, const T a, const T * x, T * y){
+    for(I i = 0; i < n; i++){
+        y[i] += a * x[i];
+    }
+}
+```
+  - use template classes from a specified list
+    - i:  integer scalar
+    - I:  integer array
+    - T:  data array
+    - \*: indicates that the next argument is an output argument
+    - v:  void
+  - crappy will
+    - inspect the header file for your funciton and parse it for types
+    - create an implementation header for an array of i-types and t-types for `numpy`
+    - create a wrapped `.cxx` file for the header file
+    - build a Python module with calls to these templates
 
 What it doesn't do
 ---
-  - first of all it's fairly limited at the name suggests
+
+First of all this is fairly limited as the name suggests!  It doesn't check anything for errors and it doesn't do anything fancy with the templates.  It could do STL vectors, but doesn't at the moment.
 
 Usage
 ---
-  - coming...
+  - coming...this is going to be a drop in
 
-Differences from sparsetools
+Differences from `sparsetools` in `scipy.sparse`
 ---
   - `sparsetools` uses a set spec list such as 'viIITT' whereas `crappy` generates this
   - `t` types (or double scalars) are now supported
