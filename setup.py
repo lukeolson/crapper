@@ -22,7 +22,7 @@ def configuration(parent_package='', top_path=None):
     print(depends)
 
     sources = [s.replace('.h', '.cxx') for s in template_headers]
-    sources += [os.path.join('base', 'sparsetools.cxx')]
+    sources += [os.path.join('base', 'crappy.cxx')]
     sources += [os.path.join('templates', 'initmodule.cxx')]
     print(sources)
 

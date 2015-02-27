@@ -84,7 +84,7 @@ CXX_TEMPLATE = """
 #define NO_IMPORT_ARRAY
 #define PY_ARRAY_UNIQUE_SYMBOL _crappy
 
-#include \"sparsetools.h\"
+#include \"crappy.h\"
 #include \"%(name)s.h\"
 
 extern \"C\" {
@@ -269,7 +269,7 @@ def main(hfilelist, hfiledir):
         - Idetifies templates with utils.identify_templates
         - Creates a call for every combination with parse_routines
         - Wrties these calls to *_impl.h
-        - Adds these headers to sparsetools_impl.h
+        - Adds these headers to crappy_impl.h
     """
     p = optparse.OptionParser(usage=__doc__.strip())
     p.add_option("--no-force", action="store_false",
@@ -341,16 +341,16 @@ def main(hfilelist, hfiledir):
     for name in names:
         method_defs += METHOD_HEADER_TEMPLATE % (name,)
 
-    method_struct = """\nstatic struct PyMethodDef sparsetools_methods[] = {"""
+    method_struct = """\nstatic struct PyMethodDef crappy_methods[] = {"""
     for name in names:
         method_struct += STRUCT_TEMPLATE % dict(name=name)
     method_struct += "\n\t{NULL, NULL, 0, NULL}"
     method_struct += '\n};'
 
-    # Produce sparsetools_impl.h
+    # Produce crappy_impl.h
     dst = os.path.join(os.path.dirname(__file__),
                        'base',
-                       'sparsetools_impl.h')
+                       'crappy_impl.h')
 
     if not newer(__file__, dst) or not options.force:
         print("[generate_functions] %r already up-to-date" % (dst,))

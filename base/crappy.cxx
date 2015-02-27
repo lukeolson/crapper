@@ -27,7 +27,7 @@
 #include <vector>
 #include <cstdlib>
 
-#include "sparsetools.h"
+#include "crappy.h"
 
 #define MAX_ARGS 16
 

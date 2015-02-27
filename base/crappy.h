@@ -1,5 +1,5 @@
-#ifndef SPARSETOOLS_H
-#define SPARSETOOLS_H
+#ifndef CRAPPY_H
+#define CRAPPY_H
 
 #define PY_ARRAY_UNIQUE_SYMBOL _crappy
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
