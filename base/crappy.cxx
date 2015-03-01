@@ -308,7 +308,7 @@ call_thunk(char ret_spec, const char *spec, thunk_t *thunk, PyObject *args)
 
             /* Cast if necessary */
             arg = arg_arrays[j];
-            if (!PyArray_EquivTypenums(PyArray_DESCR(arg)->type_num,
+            if (!PyArray_EquivTypenums(PyArray_DESCR((PyArrayObject *) arg)->type_num,
                                        cur_typenum))
             {
                 arg_arrays[j] = c_array_from_object(arg, cur_typenum, is_output[j]);
@@ -320,11 +320,11 @@ call_thunk(char ret_spec, const char *spec, thunk_t *thunk, PyObject *args)
         }
 
         /* Grab value */
-        arg_list[j] = PyArray_DATA(arg_arrays[j]);
+        arg_list[j] = PyArray_DATA((PyArrayObject *) arg_arrays[j]);
 
         /* Find maximum array size */
-        if (PyArray_SIZE(arg_arrays[j]) > max_array_size) {
-            max_array_size = PyArray_SIZE(arg_arrays[j]);
+        if (PyArray_SIZE((PyArrayObject *) arg_arrays[j]) > max_array_size) {
+            max_array_size = PyArray_SIZE((PyArrayObject *) arg_arrays[j]);
         }
     }
 
@@ -512,7 +512,7 @@ static PyObject *array_from_std_vector_and_free(int typenum, void *p)
         npy_intp length = v->size();                            \
         PyObject *obj = PyArray_SimpleNew(1, &length, typenum); \
         if (length > 0) {                                       \
-            memcpy(PyArray_DATA(obj), &((*v)[0]),               \
+            memcpy(PyArray_DATA((PyArrayObject *) obj), &((*v)[0]),               \
                    sizeof(ctype)*length);                       \
         }                                                       \
         delete v;                                               \
