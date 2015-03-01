@@ -78,7 +78,7 @@ NPY_VISIBILITY_HIDDEN PyObject *%s_method(PyObject *, PyObject *);
 """
 
 STRUCT_TEMPLATE = """
-  {\"%(name)s\", (PyCFunction)%(name)s_method, METH_VARARGS, NULL},"""
+  {\"%(name)s\", (PyCFunction)%(name)s_method, METH_VARARGS, method_doc},"""
 
 CXX_TEMPLATE = """
 #define NO_IMPORT_ARRAY
@@ -341,7 +341,10 @@ def main(hfilelist, hfiledir):
     for name in names:
         method_defs += METHOD_HEADER_TEMPLATE % (name,)
 
-    method_struct = """\nstatic struct PyMethodDef crappy_methods[] = {"""
+    method_doc = 'static char method_doc[] = '
+    method_doc += '\"Docstring for the methods. (move later)\";'
+
+    method_struct = '\nstatic struct PyMethodDef crappy_methods[] = {'
     for name in names:
         method_struct += STRUCT_TEMPLATE % dict(name=name)
     method_struct += "\n\t{NULL, NULL, 0, NULL}"
@@ -359,6 +362,7 @@ def main(hfilelist, hfiledir):
         with open(dst, 'w') as f:
             f.write(AUTOGENERATE_TEMPLATE)
             f.write(method_defs)
+            f.write(method_doc)
             f.write(method_struct)
 
 if __name__ == "__main__":
