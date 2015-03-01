@@ -5,6 +5,8 @@ extern "C" {
 
 #include "crappy_impl.h"
 
+static char crappy_doc[] = "Docstring for crappy.";
+
 #if PY_VERSION_HEX >= 0x03000000
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
@@ -28,7 +30,7 @@ PyObject *PyInit_crappy(void)
 #else
 PyMODINIT_FUNC initcrappy(void) {
     PyObject *m;
-    m = Py_InitModule("crappy", crappy_methods);
+    m = Py_InitModule3("crappy", crappy_methods, crappy_doc);
     import_array();
     if (m == NULL) {
         Py_FatalError("can't initialize module crappy");
