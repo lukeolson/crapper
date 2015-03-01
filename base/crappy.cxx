@@ -54,7 +54,6 @@ static void *allocate_std_vector_typenum(int typenum);
 static void free_std_vector_typenum(int typenum, void *p);
 static PyObject *c_array_from_object(PyObject *obj, int typenum, int is_output);
 
-
 /*
  * Call a thunk function, dealing with input and output arrays.
  *
@@ -218,7 +217,7 @@ call_thunk(char ret_spec, const char *spec, thunk_t *thunk, PyObject *args)
         }
 
         /* Find a compatible supported data type */
-        dtype = PyArray_DESCR(arg_arrays[j]);
+        dtype = PyArray_DESCR((PyArrayObject *) arg_arrays[j]);
         for (k = 0; k < n_supported_typenums; ++k) {
             if (PyArray_CanCastSafely(dtype->type_num, supported_typenums[k]))
             {
