@@ -78,7 +78,7 @@ NPY_VISIBILITY_HIDDEN PyObject *%s_method(PyObject *, PyObject *);
 """
 
 STRUCT_TEMPLATE = """
-  {\"%(name)s\", (PyCFunction)%(name)s_method, METH_VARARGS, method_doc},"""
+  {\"%(name)s\", (PyCFunction)%(name)s_method, METH_VARARGS, %(name)s_doc},"""
 
 CXX_TEMPLATE = """
 #define NO_IMPORT_ARRAY
@@ -90,6 +90,8 @@ CXX_TEMPLATE = """
 extern \"C\" {
         #include \"%(name)s_impl.h\"
 }"""
+
+DOC_TEMPLATE = 'static char %s_doc[] = \"%s\";'
 
 
 # Code generation
@@ -277,6 +279,7 @@ def main(hfilelist, hfiledir):
     options, args = p.parse_args()
 
     names = []
+    docstrings = []
 
     i_types, t_types, it_types, getter_code = get_thunk_type_set()
 
@@ -284,6 +287,7 @@ def main(hfilelist, hfiledir):
     # Generate *.cxx for each header
     for hfile in hfilelist:
         funcs = utils.identify_templates(os.path.join(hfiledir, hfile))
+        print funcs
 
         # _impl.h
         dst = os.path.join(os.path.dirname(__file__), hfiledir,
@@ -300,6 +304,7 @@ def main(hfilelist, hfiledir):
             methods = []
             for func in funcs:
                 name = func['func']
+                docstring = func['docstring']
                 args = func['spec']
                 if ('i' in args or 'I' in args) and\
                         ('t' in args or 'T' in args):
@@ -309,12 +314,13 @@ def main(hfilelist, hfiledir):
                 elif ('t' in args or 'T' in args):
                     thunk, method = parse_routine(name, args, t_types)
 
-            if name in names:
-                raise ValueError("Duplicate routine %r" % (name,))
+                if name in names:
+                    raise ValueError("Duplicate routine %r" % (name,))
 
-            names.append(name)
-            thunks.append(thunk)
-            methods.append(method)
+                names.append(name)
+                docstrings.append(docstring)
+                thunks.append(thunk)
+                methods.append(method)
 
             with open(dst, 'w') as f:
                 f.write(AUTOGENERATE_TEMPLATE)
@@ -341,11 +347,10 @@ def main(hfilelist, hfiledir):
 
     # Generate code for method struct
     method_defs = ""
-    for name in names:
+    method_docs = ""
+    for name, docstring in zip(names, docstrings):
         method_defs += METHOD_HEADER_TEMPLATE % (name,)
-
-    method_doc = 'static char method_doc[] = '
-    method_doc += '\"Docstring for the methods. (move later)\";'
+        method_docs += DOC_TEMPLATE % (name, repr(docstring))
 
     method_struct = '\nstatic struct PyMethodDef crappy_methods[] = {'
     for name in names:
@@ -367,7 +372,7 @@ def main(hfilelist, hfiledir):
         with open(dst, 'w') as f:
             f.write(AUTOGENERATE_TEMPLATE)
             f.write(method_defs)
-            f.write(method_doc)
+            f.write(method_docs)
             f.write(method_struct)
 
 if __name__ == "__main__":

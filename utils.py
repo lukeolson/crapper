@@ -142,7 +142,7 @@ def identify_templates(hfile):
 
         funcs.append({'func': funcname, 'const': const, 'atype': atype,
                       'ret': funcret, 'spec': spec,
-                      'docstring': pdocstring[k]})
+                      'docstring': docst[k]})
         print('\t...found %s(...)' % funcname)
         k += 1
     return funcs
