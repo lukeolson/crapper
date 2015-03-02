@@ -1,4 +1,5 @@
 import re
+import numpy as np
 
 
 def identify_templates(hfile):
@@ -58,15 +59,21 @@ def identify_templates(hfile):
 
     # each docstring is associated with some template
     # each template is not associated with some docstring
+    # associate the templates with docstring if possible (from docstrong POV)
+    temp_start = np.array(temp_start)
     docst = ['' for t in range(len(temp_start))]
+    cppcomment = re.compile('^//')
 
     for ms, me in zip(docst_start, docst_end):
         if ms >= me:
             raise ValueError('Problem with docstring begin{docstring} ' +
                              'or end{docstring}')
-
-
-
+        docid = np.where(ms < temp_start)[0][0]
+        docstring = text[ms:me].splitlines()
+        pdocstring = []
+        for d in docstring[1:]:  # not the first line
+            pdocstring.append(cppcomment.sub('', d))
+        docst[docid] = '\n'.join(pdocstring)
 
     classre = re.compile('template.*<(.+?)>')
     funcre = re.compile('template\s*<.*?>(.+?){', re.DOTALL)
@@ -75,6 +82,7 @@ def identify_templates(hfile):
 
     funcs = []
     print('[identify_templates] ...parsing %s' % hfile)
+    k = 0
     for tstart in temp_start:
         # class list
         classes = classre.search(text, tstart).group(1).strip()
@@ -133,8 +141,10 @@ def identify_templates(hfile):
                 spec += '*' + t
 
         funcs.append({'func': funcname, 'const': const, 'atype': atype,
-                      'ret': funcret, 'spec': spec})
+                      'ret': funcret, 'spec': spec,
+                      'docstring': pdocstring[k]})
         print('\t...found %s(...)' % funcname)
+        k += 1
     return funcs
 
 

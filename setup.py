@@ -17,14 +17,9 @@ def configuration(parent_package='', top_path=None):
     template_headers = [h for h in glob.glob('templates/example.h')]
     depends = base_headers + template_headers
 
-    print(base_headers)
-    print(template_headers)
-    print(depends)
-
     sources = [s.replace('.h', '.cxx') for s in template_headers]
     sources += [os.path.join('base', 'crappy.cxx')]
     sources += [os.path.join('templates', 'initmodule.cxx')]
-    print(sources)
 
     import generate_functions
     generate_functions.main(template_headers, '')

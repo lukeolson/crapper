@@ -290,9 +290,11 @@ def main(hfilelist, hfiledir):
                            hfile.replace('.h', '_impl.h'))
 
         if not newer(__file__, dst) or not options.force:
-            print("[generate_functions] %r already up-to-date" % (dst,))
+            print("[generate_functions] %r already up-to-date" %
+                  (os.path.relpath(dst),))
         else:
-            print("[generate_functions] generating %r" % (dst,))
+            print("[generate_functions] generating %r" %
+                  (os.path.relpath(dst),))
 
             thunks = []
             methods = []
@@ -327,13 +329,14 @@ def main(hfilelist, hfiledir):
                            hfile.replace('.h', '.cxx'))
 
         if not newer(__file__, dst) or not options.force:
-            print("[generate_functions] %r already up-to-date" % (dst,))
+            print("[generate_functions] %r already up-to-date" %
+                  (os.path.relpath(dst),))
         else:
-            print("[generate_functions] generating %r" % (dst,))
+            print("[generate_functions] generating %r" %
+                  (os.path.relpath(dst),))
             with open(dst, 'w') as f:
                 f.write(AUTOGENERATE_TEMPLATE)
                 hbase = os.path.basename(hfile).replace('.h', '')
-                print hbase
                 f.write(CXX_TEMPLATE % dict(name=hbase))
 
     # Generate code for method struct
@@ -356,9 +359,11 @@ def main(hfilelist, hfiledir):
                        'crappy_impl.h')
 
     if not newer(__file__, dst) or not options.force:
-        print("[generate_functions] %r already up-to-date" % (dst,))
+        print("[generate_functions] %r already up-to-date" %
+              (os.path.relpath(dst),))
     else:
-        print("[generate_functions] generating %r" % (dst,))
+        print("[generate_functions] generating %r" %
+              (os.path.relpath(dst),))
         with open(dst, 'w') as f:
             f.write(AUTOGENERATE_TEMPLATE)
             f.write(method_defs)
