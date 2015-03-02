@@ -46,7 +46,28 @@ def identify_templates(hfile):
     temp_iter = re.finditer('template\s*\<', text)
     temp_start = [m.start(0) for m in temp_iter]
 
-    # ntemp = len(temp_start)
+    docst_iter = re.finditer(r'//\s*begin{docstring}', text)
+    docst_start = [m.start(0) for m in docst_iter]
+    docst_iter = re.finditer(r'//\s*end{docstring}', text)
+    docst_end = [m.start(0) for m in docst_iter]
+
+    # check begin and end docstrings
+    if len(docst_start) != len(docst_end):
+        raise ValueError('Problem with docstring begin{docstring} ' +
+                         'or end{docstring}')
+
+    # each docstring is associated with some template
+    # each template is not associated with some docstring
+    docst = ['' for t in range(len(temp_start))]
+
+    for ms, me in zip(docst_start, docst_end):
+        if ms >= me:
+            raise ValueError('Problem with docstring begin{docstring} ' +
+                             'or end{docstring}')
+
+
+
+
     classre = re.compile('template.*<(.+?)>')
     funcre = re.compile('template\s*<.*?>(.+?){', re.DOTALL)
     argsre = re.compile('(.+?)\s+(.+?)\s*\((.*?)\)', re.DOTALL)
