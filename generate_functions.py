@@ -287,7 +287,6 @@ def main(hfilelist, hfiledir):
     # Generate *.cxx for each header
     for hfile in hfilelist:
         funcs = utils.identify_templates(os.path.join(hfiledir, hfile))
-        print funcs
 
         # _impl.h
         dst = os.path.join(os.path.dirname(__file__), hfiledir,
@@ -376,8 +375,14 @@ def main(hfilelist, hfiledir):
             f.write(method_struct)
 
 if __name__ == "__main__":
-    temps = os.listdir('./templates')
-    example_templates = [h for h in temps
-                         if (h.startswith('example') and h.endswith('.h'))]
-    example_templates = ['example.h']
-    main(example_templates, './templates/')
+    import sys
+    if len(sys.argv) == 1:
+        temps = os.listdir('./templates')
+        example_templates = [h for h in temps
+                             if (h.startswith('example') and h.endswith('.h'))]
+        example_templates = ['example.h']
+        main(example_templates, './templates/')
+    else:
+        import os
+        f = sys.argv[1]
+        main(os.path.basename(f), os.path.dirname(f))

@@ -13,21 +13,23 @@ def configuration(parent_package='', top_path=None):
     config = Configuration()
     config.add_data_dir('tests')
 
-    sources = []
     # check for a config file in ..
+    cfg_headers = []
     try:
-        with open('../crappy.cfg', 'r') as fcfg:
+        with open('crappy.cfg', 'r') as fcfg:
             newsource = fcfg.readline().strip()
-            newsource = os.path.join('..', newsource)
-        if os.isfile(newsource):
-            sources += [newsource]
+            #newsource = os.path.join('..', newsource)
+        if os.path.isfile(newsource):
+            cfg_headers += [newsource]
     except IOError as e:
         print("I/O error({%d}): %s" % (e.errno, e.strerror))
 
     base_headers = [h for h in glob.glob('base/*.h')]
     template_headers = [h for h in glob.glob('templates/example.h')]
+    template_headers += cfg_headers
     depends = base_headers + template_headers
 
+    sources = []
     sources += [s.replace('.h', '.cxx') for s in template_headers]
     sources += [os.path.join('base', 'crappy.cxx')]
     sources += [os.path.join('templates', 'initmodule.cxx')]

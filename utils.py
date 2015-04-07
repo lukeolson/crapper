@@ -124,7 +124,7 @@ def identify_templates(hfile):
             else:
                 const.append(False)
             arg = arg.replace('const', '').strip()
-            if '*' in arg:
+            if ('*' in arg) or ('[]' in arg):
                 atype.append(arg[0].upper())
             else:
                 atype.append(arg[0].lower())
@@ -148,11 +148,17 @@ def identify_templates(hfile):
 
 
 if __name__ == '__main__':
-    import os
-    temps = os.listdir('./templates')
-    example_templates = ['./templates/' + h for h in temps
-                         if (h.startswith('example') and h.endswith('.h'))]
-    for temp in example_templates:
-        funcs = identify_templates(temp)
-
-    funcs = identify_templates('./templates/example.h')
+    import sys
+    if len(sys.argv) == 1:
+        import os
+        temps = os.listdir('./templates')
+        example_templates = [h for h in temps
+                             if (h.startswith('example') and h.endswith('.h'))]
+        example_templates = ['example.h']
+        funcs = identify_templates(example_templates, './templates/')
+    else:
+        f = sys.argv[1]
+        funcs = identify_templates(f)
+        for func in funcs:
+            print(func['func'])
+            print('     %s' % func['spec'])
