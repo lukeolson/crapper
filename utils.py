@@ -28,18 +28,17 @@ def identify_templates(hfile):
     rules:
         - 'template' identifies the start of a templated function
         - the argument list is limited to
-          - i: int scalar
           - I: int array
-          - t: data scalar
           - T: data array
         - if *, then pointer type
           else, scalar
         - multiples of the same type look like I1, I2, ...
         - in addition 'const' and 'void'
         - in addition operators of the form OP&
+        - then it makes i, I, t, T, depending on type
     """
 
-    types = ['i', 'I', 't', 'T', 'F', 'R', 'S']
+    types = ['i', 'I', 't', 'T']
 
     with open(hfile, 'rU') as hfid:
         text = hfid.read()
